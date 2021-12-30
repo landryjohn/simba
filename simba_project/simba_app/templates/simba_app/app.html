@@ -1,0 +1,146 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} Simba {% endblock %}</title>
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'simba_app/img/logo-simba.png'%}"/>
+    <link rel="stylesheet" href="{% static 'simba_app/style.css' %}">
+    <!-- Boxiocns CDN Link -->
+    <link href="{% static 'simba_app/style/boxicons.min.css' %}" rel='stylesheet'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <div class="sidebar close">
+        {% block sidebar %}
+        <div class="logo-details">
+            <img class="logo-img" src="{% static 'simba_app/img/logo-simba.png'%}" width="80px" height="80px" alt="">
+            <span class="logo_name">Simba</span>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="#">
+                    <i class='bx bx-grid-alt'></i>
+                    <span class="link_name">Tableau De Bord</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Tableau De Bord</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bxs-network-chart'></i>
+                        <span class="link_name">Réseau</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">Réseau</a></li>
+                    <li><a href="#">Cartographie</a></li>
+                    <li><a href="#">Equipements</a></li>
+                    <li><a href="#">Alertes</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bxs-traffic-barrier'></i>
+                        <span class="link_name">IDS</span>
+                    </a>
+                    <i class='bx bxs-chevron-down arrow'></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a class="link_name" href="#">IDS</a></li>
+                    <li><a href="#">Intrusions</a></li>
+                    <li><a href="#">Alertes</a></li>
+                    <li><a href="#">Configuration</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-virus-block'></i>
+                    <span class="link_name">Vulnérabilités</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Vulnérabilités</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-user-detail'></i>
+                    <span class="link_name">Utilisateurs</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Utilisateurs</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bxs-bell'></i>
+                    <span class="link_name">Notifications (0)</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Notifications (0)</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="iocn-link">
+                    <a href="#">
+                        <i class='bx bx-history'></i>
+                        <span class="link_name">Logs</span>
+                    </a>
+                </div>
+            </li>
+            <li>
+                <a href="#">
+                    <i class='bx bx-cog'></i>
+                    <span class="link_name">Paramètres</span>
+                </a>
+                <ul class="sub-menu blank">
+                    <li><a class="link_name" href="#">Paramètres</a></li>
+                </ul>
+            </li>
+            <li>
+                <div class="profile-details">
+                    <div class="profile-content">
+                        <img src="{% static 'simba_app/img/logo-simba.png' %}" alt="profileImg">
+                    </div>
+                    <div class="name-job">
+                        <div class="profile_name">Landry John</div>
+                        <div class="job">Adminitrateur</div>
+                    </div>
+                    <i class='bx bx-log-out'></i>
+                </div>
+            </li>
+        </ul>
+        {% endblock %}
+    </div>
+    <section class="home-section">
+        {% block content %}
+        {% endblock %}
+    </section>
+    <script>
+        let arrow = document.querySelectorAll(".arrow");
+        for (var i = 0; i < arrow.length; i++) {
+            arrow[i].addEventListener("click", (e) => {
+                let arrowParent = e.target.parentElement.parentElement; //selecting main parent of arrow
+                arrowParent.classList.toggle("showMenu");
+            });
+        }
+        let sidebar = document.querySelector(".sidebar");
+        let sidebarBtn = document.querySelector(".bx-menu");
+        console.log(sidebarBtn);
+        sidebarBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("close");
+        });
+    </script>
+
+    {% block scripts %}
+    {% endblock %}
+
+</body>
+
+</html>
