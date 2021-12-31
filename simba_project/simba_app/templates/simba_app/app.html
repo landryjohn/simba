@@ -75,7 +75,7 @@
                     <span class="link_name">Utilisateurs</span>
                 </a>
                 <ul class="sub-menu blank">
-                    <li><a class="link_name" href="#">Utilisateurs</a></li>
+                    <li><a class="link_name" href="{% url 'simba_app:users' %}">Utilisateurs</a></li>
                 </ul>
             </li>
             <li>
@@ -110,7 +110,7 @@
                         <img src="{% static 'simba_app/img/logo-simba.png' %}" alt="profileImg">
                     </div>
                     <div class="name-job">
-                        <div class="profile_name">Landry John</div>
+                        <div class="profile_name">{{ user.first_name }}</div>
                         <div class="job">Adminitrateur</div>
                     </div>
                     <a href="{% url 'simba_app:logout' %}">
