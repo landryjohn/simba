@@ -1,0 +1,24 @@
+<h2>Login</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Login">
+</form>
+
+<a href="{% url 'simba_app:home' %}">Back to dashboard</a>
+
+<input type="hidden" name="csrfmiddlewaretoken"
+    value="ZCMgOgHT4qFFPweMRjCsfOir840UoshrY0ucmBrViplVEzpC6OK0LhTBoZBfYAVP">
+<p>
+    <label for="id_username">Nom d’utilisateur :</label>
+    <input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required
+        id="id_username">
+</p>
+
+<p>
+    <label for="id_password">Mot de passe :</label>
+    <input type="password" name="password" autocomplete="current-password" required id="id_password">
+</p>
+<input type="submit" value="Login">
+</form>
