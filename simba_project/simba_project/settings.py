@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOGIN_REDIRECT_URL = "simba_app:home"
 
 LOGOUT_REDIRECT_URL = "simba_app:login"
- 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
@@ -28,11 +28,9 @@ SECRET_KEY = 'django-insecure-u5f3^uu53&^+uul@k60pwu6h%1$3fqo9*k=y67rc5bqe!*jb^^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     'simba_app',
     'rest_framework',
@@ -90,12 +88,12 @@ WSGI_APPLICATION = 'simba_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'simba',
-        'USER': 'postgres',
-        'PASSWORD': 'root',
+        'USER': 'simba',
+        'PASSWORD': 's1mb@1234',
         'HOST': 'localhost',
-        'PORT': '5432'
+        'PORT': '3306'
     }
 }
 
