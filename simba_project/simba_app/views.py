@@ -29,10 +29,11 @@ def get_users(request):
 @api_view(['POST'])
 def system_call(request):
     method = request.POST.get('method', '')
+    payload = request.POST.get('payload', 'null')
     if method :
         if method not in SUPPORTED_METHOD_LIST : 
             return Response(data={'message':f"{method} method is not supported !"}, status=status.HTTP_200_OK)
-        output = subprocess.run(f"python3 {SCRIPT_PATH} -s {method}".split(), capture_output=True, text=True).stdout
+        output = subprocess.run(f"python3 {SCRIPT_PATH} -s {method} -d {payload}".split(), capture_output=True, text=True).stdout
         return Response(data={'message':output}, status=status.HTTP_200_OK)
     else:
         return Response(data={'message':'You have to provide a method function'}, status=status.HTTP_200_OK)

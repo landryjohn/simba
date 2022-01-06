@@ -4,7 +4,9 @@ SCRIPT_PATH = "/home/simba/project-lab/simba/simba_project/simba_app/scripts/scr
 SUPPORTED_METHOD_LIST = [
     'get_intrusion_report', 
     'get_signature_database',
-    'show_simba_rules'
+    'show_simba_rules',
+    'show_services_status',
+    'add_block_user_rule'
 ]
 
 def shell_command(array_command:list) -> None:
@@ -22,11 +24,24 @@ def get_signature_database() -> None:
 def show_simba_rules() -> None : 
     shell_command("cat /etc/snort/rules/simba.rules".split())
 
+# show services status 
+def show_services_status() -> None : 
+    shell_command("sudo service --status-all".split())
+
+# Add block user rule in the firewall
+def add_block_user_rule(host_ip_address:str) -> None : 
+    shell_command(f"sudo ufw reject from {host_ip_address} to any".split())
+
+# Show firewall status
+def show_firewall_status() -> None : 
+    shell_command(f"sudo ufw status".split())
+
 def main():
     parser = argparse.ArgumentParser()
 
     #Adding switches 
     parser.add_argument('-s', '--script', metavar='', type=str, help='Name of the script to run')
+    parser.add_argument('-d', '--payload', metavar='', type=str, help='Payload data')
 
     args = parser.parse_args()
     
@@ -36,6 +51,13 @@ def main():
         get_signature_database()
     if args.script == "show_simba_rules" :
         show_simba_rules() 
-      
+    if args.script == "show_services_status" :
+        show_services_status() 
+    if args.script == "add_block_user_rule" :
+        payload = args.payload
+        if payload == 'null' : 
+            print("[X] payload parameter is required...")
+        add_block_user_rule(payload.split(':')[1])
+        show_firewall_status()
 if __name__ == '__main__':
     main()
