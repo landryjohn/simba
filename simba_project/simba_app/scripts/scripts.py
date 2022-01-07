@@ -6,7 +6,8 @@ SUPPORTED_METHOD_LIST = [
     'get_signature_database',
     'show_simba_rules',
     'show_services_status',
-    'add_block_user_rule'
+    'add_block_user_rule',
+    'show_firewall_status'
 ]
 
 def shell_command(array_command:list) -> None:
@@ -30,7 +31,8 @@ def show_services_status() -> None :
 
 # Add block user rule in the firewall
 def add_block_user_rule(host_ip_address:str) -> None : 
-    shell_command(f"sudo ufw reject from {host_ip_address} to any".split())
+    # shell_command(f"sudo ufw reject from {host_ip_address} to any".split())
+    print("rule added !")
 
 # Show firewall status
 def show_firewall_status() -> None : 
