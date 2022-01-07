@@ -88,12 +88,12 @@ WSGI_APPLICATION = 'simba_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'simba',
         'USER': 'simba',
         'PASSWORD': 's1mb@1234',
         'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'PORT': '5432'
     }
 }
 
