@@ -1,8 +1,8 @@
 import subprocess, argparse
 
-SCRIPT_PATH = "/home/simba/project-lab/simba/simba_project/simba_app/scripts/scripts.py"
+SCRIPT_PATH = "/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/scripts.py"
 SUPPORTED_METHOD_LIST = [
-    'get_intrusion_report', 
+    'get_intrusion_report',
     'get_signature_database',
     'show_simba_rules',
     'show_services_status',
@@ -10,7 +10,7 @@ SUPPORTED_METHOD_LIST = [
     'show_firewall_status'
 ]
 
-def shell_command(array_command:list) -> None:
+def shell_command(array_command) -> None:
     print(subprocess.run(array_command, capture_output=True, text=True).stdout)
 
 # method to gel all alert of the current day
