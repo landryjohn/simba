@@ -56,7 +56,7 @@ data = {
             "tag": "signature_database",
             "patterns": ["afficher la base de signatures", "montrer la base virale", "afficher la liste des règles", 
                 "règle de l'IDS", "signatures des attaques", "liste des attaques", "liste des règles", "Montre moi les règles"],
-            "responses": ["Voici la base de signature", "Voici la base de signature la plus à jour"]
+            "responses": ["Voici la base de données des signatures d'attques", "Voici la base de signature d'attaque la plus à jour"]
         },
         {
             "tag": "simba_rules",
@@ -204,7 +204,7 @@ def train_model() -> None:
     print("***************************************")
 
 # Chargement du modèle le plus à jour
-# model = load_model('mdiai_model.hdf5')
+model = load_model('/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/dlmodel/mdiai_model.hdf5')
 
 # fonction utilisée pour reformater l'entrée de l'utilisateur 
 # en utilisant un tokeniseur et le lemmatiseur
@@ -248,7 +248,7 @@ def get_intent(intents_list, dataset_json_intents):
 # lancement de l'agent conversationnel pour le test
 if __name__ == '__main__' : 
     while True:
-        break;
+        # break;
         message = input("")
         intents = class_prediction(message.lower(), words, classes)
         result = random.choice(get_intent(intents, data)["responses"])

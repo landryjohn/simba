@@ -14,7 +14,8 @@ urlpatterns = [
     path('api/prediction/', views.prediction, name='prediction'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api/users/', views.get_users),
-    path('api/system_call/', views.system_call)
+    path('api/system_call/', views.system_call),
+    path('test/', views.test)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

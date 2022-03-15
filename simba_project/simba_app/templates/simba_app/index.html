@@ -121,30 +121,14 @@
             document.getElementById('listeningButton').innerHTML = 'Commande Vocale'
             add_chatbot_message("Commande en cours de traitement...")
             // Envoi de la commande textuelle pour le traitement 
-            payload = {
-                'command': text,
-                'csrfmiddlewaretoken' : '{{ csrf_token }}'
-            }
-            console.log('{{ csrf_token }}');
-            options = {
-                method: 'POST',
-                body: JSON.stringify(payload)
-            }
-            fetch('http://192.168.8.30:9000/prediction/', options)
-                .then(res => {
-                    console.log(res)   
-                })
-                .catch(err => {
-                    console.log(err)
-                    alert("une erreur s'est produite")
-                })
+            send_request(text)
             
             document.getElementById('listeningButton').scrollIntoView();
         }
     })
     
-    function send_request() {
-        payload = {'command':'simba_api'}
+    function send_request(text_command) {
+        payload = {'command':text_command}
         fetch("http://192.168.8.30:9000/api/prediction/", {
             method: "post",
             credentials: "same-origin",
@@ -157,12 +141,16 @@
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
-            console.log( data );
+            add_chatbot_message(data.bot_answer)
+            add_chatbot_message(data.result)
         }).catch(function(ex) {
             alert("Une erreur s'est produite")
             console.log("parsing failed", ex);
         });
     }
+
+    send_request("base de données des signatures")
+
 
     // recognition.addEventListener("end", () => {
     //     recognition.start();

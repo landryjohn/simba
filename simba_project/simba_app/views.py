@@ -1,5 +1,6 @@
 import json
 import subprocess, requests
+from django.http import HttpResponse
 from django.contrib.auth.backends import UserModel
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
@@ -13,9 +14,18 @@ from rest_framework.parsers import FormParser, MultiPartParser
 
 from simba_app.scripts.scripts import shell_command, SCRIPT_PATH, SUPPORTED_METHOD_LIST
 
-from simba_app.dlmodel import brain
+# from simba_app.dlmodel import brain
 
 from random import choice
+
+def test(request):
+    AI_SCRIPT_PATH = "/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/ai.py"
+    with open('/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/command.txt', 'w') as command_file:
+        command_file.write("rapport d'intrusions de la journée")
+    output = subprocess.run(f"python3 {AI_SCRIPT_PATH}".split(), capture_output=True, text=True).stdout
+    print('********res')
+    print(output)
+    return HttpResponse(output)
 
 def index(request): 
     if request.user.is_authenticated :
@@ -37,6 +47,8 @@ def get_users(request):
     return Response({'message':'Hello world'}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def system_call(request):
     method = request.POST.get('method', '')
     payload = request.POST.get('payload', 'null')
@@ -55,24 +67,31 @@ def prediction(request):
     # Set this to the ip address of the application server
     BASE_URL = "http://192.168.8.30:9000"
     command = request.data.get('command', None)
-    intents = brain.class_prediction(command.lower(), brain.words, brain.classes)
-    intent = brain.get_intent(intents, brain.data)
+    AI_SCRIPT_PATH = "/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/ai.py"
+    with open('/home/mdiai/Desktop/simba/simba_project/simba_app/scripts/command.txt', 'w') as command_file:
+        command_file.write(command)
+    # intents = brain.class_prediction(command.lower(), brain.words, brain.classes)
+    # intent = brain.get_intent(intents, brain.data)
+    output = subprocess.run(f"python3 {AI_SCRIPT_PATH}".split(), capture_output=True, text=True).stdout
+    intent = dict(json.loads(output))
+    print(intent)
     data = {}
     data['bot_answer'] = choice(intent["responses"])
+    data['tag'] = intent["tag"] 
     if intent["tag"] == 'grettings' : 
-        data['bot_answer'] += "Comment puis-je vous aider" 
+        data['bot_answer'] += " Comment puis-je vous aider" 
     elif intent["tag"] == 'services_status' :
         # show_services_status
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_services_status'}).json()['message']
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_services_status'}).json()['message'].replace('\n', '<br>')
     elif intent["tag"] == 'signature_database' : 
         # get_signature_database
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_signature_database'}).json()['message']
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_signature_database'}).json()['message'].replace('\n', '<br>')
     elif intent["tag"] == 'simba_rules' :
         # show_simba_rules
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_simba_rules'}).json()['message']
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_simba_rules'}).json()['message'].replace('\n', '<br>')
     elif intent["tag"] == 'intrusion_report' : 
         # get_intrusion_report
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message'].replace('\n', '<br>')
     elif intent["tag"] == 'send_intrusion_report' : 
         # TODO : add logic according to the intent
         # get_intrusion_report 
