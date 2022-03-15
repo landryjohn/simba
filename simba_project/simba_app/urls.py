@@ -11,6 +11,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('home/', views.dashboard, name='home'),
     path('users/', views.users, name='users'),
+    path('api/prediction/', views.prediction, name='prediction'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api/users/', views.get_users),
     path('api/system_call/', views.system_call)
