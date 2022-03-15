@@ -1,3 +1,6 @@
+# Project untracked files 
+./simba_project/simba_app/scripts/command.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

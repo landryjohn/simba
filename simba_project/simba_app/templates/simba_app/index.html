@@ -98,6 +98,16 @@
     }, false)
 
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if ('speechSynthesis' in window) {
+        var synthesis = window.speechSynthesis;
+    } else {
+        alert('Text-to-speech not supported.');
+    }
+
+    function speak(text){
+        let utterance = new SpeechSynthesisUtterance(text)
+        synthesis.speak(utterance)
+    }
 
     const recognition = new SpeechRecognition();
     recognition.interimResults = true;
@@ -120,6 +130,7 @@
             chat_bulle_node = null
             document.getElementById('listeningButton').innerHTML = 'Commande Vocale'
             add_chatbot_message("Commande en cours de traitement...")
+            speak("Commande en cours de traitement")
             // Envoi de la commande textuelle pour le traitement 
             send_request(text)
             
@@ -141,16 +152,19 @@
         }).then(function(response) {
             return response.json();
         }).then(function(data) {
+            speak(data.bot_answer)
             add_chatbot_message(data.bot_answer)
-            add_chatbot_message(data.result)
+            if( data.result ){
+                add_chatbot_message(data.result)
+            }
         }).catch(function(ex) {
             alert("Une erreur s'est produite")
             console.log("parsing failed", ex);
         });
     }
 
-    send_request("base de données des signatures")
-
+    speak("Bonjour je suis MDAI. Comment puis-je vous aider ?")
+    add_chatbot_message("Bonjour je suis MDAI. Comment puis-je vous aider ?")
 
     // recognition.addEventListener("end", () => {
     //     recognition.start();
