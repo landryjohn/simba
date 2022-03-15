@@ -1,3 +1,4 @@
+import json
 import subprocess, requests
 from django.contrib.auth.backends import UserModel
 from django.shortcuts import redirect, render
@@ -62,36 +63,36 @@ def prediction(request):
         data['bot_answer'] += "Comment puis-je vous aider" 
     elif intent["tag"] == 'services_status' :
         # show_services_status
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_services_status'})
-        print(resp.json()['message'])
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_services_status'}).json()['message']
     elif intent["tag"] == 'signature_database' : 
-        # TODO : add  
         # get_signature_database
-        resp = api.post("api/system_call/", {'method':'get_signature_database'})
-        print(resp.json()['message'])
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_signature_database'}).json()['message']
     elif intent["tag"] == 'simba_rules' :
-        # TODO : add logic according to the intent
         # show_simba_rules
-        resp = api.post("api/system_call/", {'method':'show_simba_rules'})
-        print(resp.json()['message'])
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'show_simba_rules'}).json()['message']
     elif intent["tag"] == 'intrusion_report' : 
-        # TODO : add logic according to the intent  
         # get_intrusion_report
-        resp = api.post("api/system_call/", {'method':'get_intrusion_report'})
-        print(resp.json()['message'])
+        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
     elif intent["tag"] == 'send_intrusion_report' : 
         # TODO : add logic according to the intent
         # get_intrusion_report 
+        data['result'] = "Envoi du rapport d'intrusion"
     elif intent["tag"] == 'block_user_rule' : 
         # TODO : add logic according to the intent
+        data['result'] = "Bloquer un utilisateur"
     elif intent["tag"] == 'add_rule' : 
         # TODO : add logic according to the intent  
+        data['result'] = "Ajouter un règle de gestion des intrusions"
     elif intent["tag"] == 'firewall' : 
         # TODO : add logic according to the intent  
+        data['result'] = "Afficher la configuration pare-feu"
     elif intent["tag"] == 'red_code' : 
         # TODO : add logic according to the intent  
+        data['result'] = "Activation du code rouge"
     elif intent["tag"] == 'ssh_connections' : 
         # TODO : add logic according to the intent  
+        data['result'] = "Affichage des dernières connexions SSH"
     elif intent["tag"] == 'stop_simba_client' : 
-        data['intent'] = 'stop'
-    return Response(data={'message': command}, status=status.HTTP_200_OK)
+        # TODO : add logic according to the intent  
+        data['result'] = "Stop MDIAI bot"
+    return Response(data=data, status=status.HTTP_200_OK)
