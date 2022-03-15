@@ -1,19 +1,173 @@
 {% extends "simba_app/app.html" %}
+{% load static %}
+
+{% block style %}
+    <link rel="stylesheet" href="{% static 'simba_app/style/chat.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="home-content">
         <i class='bx bx-menu'></i>
-        <span class="text">Tableau De Bord</span>
-        {{ user.username }}
-        <hr>
+        <span class="text">Centre d'Administration</span>
 </div>
 
-<div class="container-fluid">
+<div class="container">
+    <div class="">
+        <div class="chat-section">
+            <!-- <div class="simba-chat-bulle shadow row py-2 chatbox">
+                <div class="col col-1 col-sm-1">
+                    <img  class="chatbot-img" src="{% static 'simba_app/img/chatbot-msg.jpg' %}" width="100px" height="80px" alt="">
+                </div>
+                <div class="col my-auto col-sm-6">
+                    <p class="align-middle">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit porro vel omnis aliquam architecto odit aperiam ad, beatae odio enim ea quisquam. Eveniet pariatur provident eius ducimus tempore accusantium beatae?
+                    </p>
+                </div>
+            </div>
+            <div class="user-chat-bulle shadow row py-2 mt-2 chatbox">
+                <div class="col my-auto">
+                    <p class="align-middle">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit porro vel omnis aliquam architecto odit aperiam ad, beatae odio enim ea quisquam. Eveniet pariatur provident eius ducimus tempore accusantium beatae?
+                    </p>
+                </div>
+                <div class="col col-1">
+                    <img  class="chatbot-img" src="{% static 'simba_app/img/avatar.svg' %}" width="100px" height="80px" alt="">
+                </div>
+            </div> -->
+        </div>
+    </div>
     <div class="row">
-        <button class="btn btn-success">Hey</button>
+        <hr>
+        <div class="text-center">
+            <img src="{% static 'simba_app/img/chatbot.png' %}" height="100%" width="25%" alt="">
+        </div>
+        <div class="text-center mt-2">
+            <p>Chatbot simba</p>
+            <p><button class="btn btn-warning" id="listeningButton">Commande Vocale</button></p>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script>
+    add_chatbot_message = (message) => {
+        chatdiv = `
+            <div class="simba-chat-bulle shadow row py-2 mt-2 chatbox">
+                <div class="col col-1 col-sm-1">
+                    <img  class="chatbot-img" src="{% static 'simba_app/img/chatbot-msg.jpg' %}" width="100px" height="80px" alt="">
+                </div>
+                <div class="col my-auto col-sm-6">
+                    <p class="align-middle">
+                        ${message}
+                    </p>
+                </div>
+            </div>
+        `
+        document.querySelector(".chat-section").insertAdjacentHTML(
+            'beforeend', 
+            chatdiv
+        )
+
+        return [...document.getElementsByClassName('chatbox')].pop()
+    }
+
+    add_user_message = (message) => {
+        chatdiv = `
+            <div class="user-chat-bulle shadow row py-2 mt-2 chatbox">
+                <div class="col my-auto">
+                    <p class="align-middle">
+                        ${message}
+                    </p>
+                </div>
+                <div class="col col-1">
+                    <img  class="chatbot-img" src="{% static 'simba_app/img/avatar.svg' %}" width="100px" height="80px" alt="">
+                </div>
+            </div>
+        `
+        document.querySelector(".chat-section").insertAdjacentHTML(
+            'beforeend', 
+            chatdiv
+        )
+        return [...document.getElementsByClassName('chatbox')].pop()
+    }
+    
+    document.getElementById('listeningButton').addEventListener('click', () => {
+        document.getElementById('listeningButton').innerHTML = 'Commande Vocale (Le chatbot écoute)'
+        recognition.start();
+    }, false)
+
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const recognition = new SpeechRecognition();
+    recognition.interimResults = true;
+
+    chat_bulle_node = null
+
+    recognition.addEventListener("result", (e) => {
+        if(chat_bulle_node == null){
+            chat_bulle_node = add_user_message()
+        }
+        const text = Array.from(e.results)
+            .map((result) => result[0])
+            .map((result) => result.transcript)
+            .join("");
+
+        chat_bulle_node.querySelector('p').innerHTML = text
+
+        // Fin de la commande et du traitement STT
+        if (e.results[0].isFinal) {
+            chat_bulle_node = null
+            document.getElementById('listeningButton').innerHTML = 'Commande Vocale'
+            add_chatbot_message("Commande en cours de traitement...")
+            // Envoi de la commande textuelle pour le traitement 
+            payload = {
+                'command': text,
+                'csrfmiddlewaretoken' : '{{ csrf_token }}'
+            }
+            console.log('{{ csrf_token }}');
+            options = {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            }
+            fetch('http://192.168.8.30:9000/prediction/', options)
+                .then(res => {
+                    console.log(res)   
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert("une erreur s'est produite")
+                })
+            
+            document.getElementById('listeningButton').scrollIntoView();
+        }
+    })
+    
+    function send_request() {
+        payload = {'command':'simba_api'}
+        fetch("http://192.168.8.30:9000/api/prediction/", {
+            method: "post",
+            credentials: "same-origin",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "Accept": "application/json, text/plain, */*",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log( data );
+        }).catch(function(ex) {
+            alert("Une erreur s'est produite")
+            console.log("parsing failed", ex);
+        });
+    }
+
+    // recognition.addEventListener("end", () => {
+    //     recognition.start();
+    // });
+
+    // recognition.start();
+</script>
 {% endblock %}
