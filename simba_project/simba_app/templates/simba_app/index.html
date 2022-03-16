@@ -163,8 +163,11 @@
         });
     }
 
-    speak("Bonjour je suis MDAI. Comment puis-je vous aider ?")
-    add_chatbot_message("Bonjour je suis MDAI. Comment puis-je vous aider ?")
+    document.addEventListener("DOMContentLoaded", function(event) {
+        speak("Bonjour je suis MDIAI. Comment puis-je vous aider ?")
+        add_chatbot_message("Bonjour je suis MDAI. Comment puis-je vous aider ?")
+    }, false);
+
 
     // recognition.addEventListener("end", () => {
     //     recognition.start();
