@@ -120,7 +120,7 @@ def prediction(request):
             today = f"{datetime.datetime.now():%d-%m-%Y}"
             flow_list = re.findall('.* ->', intrusion_report)
             print('flow_list', flow_list)
-            attackers = set([ machines.split()[-2] for machines in flow_list ])
+            attackers = set([ machines.split()[-2].split(':')[0] for machines in flow_list ])
             print('attackers', attackers)
             data['bot_answer'] = f"Je détecte actuellement {alerts_number} alertes dans le système de détection des intrusions pour la journée du {today.replace('-',' ')}. "
             data['bot_answer'] += f"Les machines suspectent dans le réseau 192.168.8.0/24 sont les suivantes : "
