@@ -125,7 +125,7 @@ def prediction(request):
         BOT_TOKEN = env('TELEGRAM_BOT_KEY')
         CHATID = env('TELEGRAM_CHAT_ID')
         content = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
-        r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text=Hello World!')
+        r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text={content}')
         if r["ok"] :
             data['bot_answer'] = "Le rapport d'intrusions à été bien envoyé"
         else :
