@@ -51,6 +51,11 @@
 
 {% block scripts %}
 <script>
+
+    function choice(_array){
+        return _array[Math.floor(Math.random()*_array.length)]
+    }
+
     add_chatbot_message = (message) => {
         chatdiv = `
             <div class="simba-chat-bulle shadow row py-2 mt-2 chatbox">
@@ -92,6 +97,12 @@
         return [...document.getElementsByClassName('chatbox')].pop()
     }
     
+    responses = [
+        "Compris, je traite votre commande", 
+        "D'accord, je suis dessus.", 
+        "Un instant s'il vous plait"
+    ]
+
     document.getElementById('listeningButton').addEventListener('click', () => {
         document.getElementById('listeningButton').innerHTML = 'Commande Vocale (Le chatbot écoute)'
         recognition.start();
@@ -129,8 +140,8 @@
         if (e.results[0].isFinal) {
             chat_bulle_node = null
             document.getElementById('listeningButton').innerHTML = 'Commande Vocale'
-            add_chatbot_message("Commande en cours de traitement...")
-            speak("Commande en cours de traitement")
+            add_chatbot_message(choice(responses))
+            speak(choice(responses))
             // Envoi de la commande textuelle pour le traitement 
             send_request(text)
             

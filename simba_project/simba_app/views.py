@@ -22,6 +22,7 @@ from random import choice
 
 import environ
 
+
 # Initialise environment variables
 env = environ.Env()
 
@@ -29,17 +30,20 @@ env = environ.Env()
 def test(request):
     BASE_URL = "http://192.168.8.30:9000"
     data = {}
-    data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
+    # get_intrusion_report
+    data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message'].replace('\n', '<br>')
     alerts_number = data['result'].count('Classification')
     if alerts_number : 
         today = f"{datetime.datetime.now():%d-%m-%Y}"
-        flow_list = re.findall('.* ->', data['result'])
-        print('flow list', flow_list)
+        flow_list = re.findall(' .* ->', data['result'])
+        print('flow_list', flow_list)
         attackers = set([ machines.split()[-2] for machines in flow_list ])
         print('attackers', attackers)
         data['bot_answer'] = f"Je détecte actuellement {alerts_number} alertes dans le système de détection des intrusions pour la journée du {today.replace('-',' ')}. "
         data['bot_answer'] += f"Les machines suspectent dans le réseau 192.168.8.0/24 sont les suivantes : "
         data['bot_answer'] += f"{' '.join(attackers)}"
+    else : 
+        data['bot_answer'] = "Aucune alerte à signaler pour aujourd'hui"
     return HttpResponse(data['bot_answer'])
 
 def index(request): 
@@ -109,12 +113,15 @@ def prediction(request):
         data['bot_answer'] = "Voici les règles personnalisées de MDAIA"
     elif intent["tag"] == 'intrusion_report' : 
         # get_intrusion_report
-        data['result'] = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message'].replace('\n', '<br>')
-        alerts_number = data['result'].count('Classification')
+        intrusion_report = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
+        data['result'] = intrusion_report.replace('\n', '<br>')
+        alerts_number = intrusion_report.count('Classification')
         if alerts_number : 
             today = f"{datetime.datetime.now():%d-%m-%Y}"
-            flow_list = re.findall('.* ->', data['result'])
+            flow_list = re.findall('.* ->', intrusion_report)
+            print('flow_list', flow_list)
             attackers = set([ machines.split()[-2] for machines in flow_list ])
+            print('attackers', attackers)
             data['bot_answer'] = f"Je détecte actuellement {alerts_number} alertes dans le système de détection des intrusions pour la journée du {today.replace('-',' ')}. "
             data['bot_answer'] += f"Les machines suspectent dans le réseau 192.168.8.0/24 sont les suivantes : "
             data['bot_answer'] += f"{' '.join(attackers)}"
@@ -124,8 +131,14 @@ def prediction(request):
         # get_intrusion_report via telegram
         BOT_TOKEN = env('TELEGRAM_BOT_KEY')
         CHATID = env('TELEGRAM_CHAT_ID')
-        content = requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
-        r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text={content}')
+        content = f"Rapport du {datetime.datetime.now():%d-%m-%Y}\n\n========================\n\n"
+        content += requests.post(f"{BASE_URL}/api/system_call/", data={'method':'get_intrusion_report'}).json()['message']
+        if len(content) > 4095:
+            for x in range(0, len(content), 4095):
+                r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text={content[x:x+4095]}').json()
+        else:
+            r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text={content}').json()
+        # r = requests.post(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHATID}&text={content}').json()
         if r["ok"] :
             data['bot_answer'] = "Le rapport d'intrusions à été bien envoyé"
         else :
